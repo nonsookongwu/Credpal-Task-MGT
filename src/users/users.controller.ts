@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserSignupDto } from './dto/users-signup.dto';
 import { UserEntity } from './entities/user.entity';
+import { UserLoginDto } from './dto/users-login.dto';
 
 @Controller('users')
 export class UsersController {
@@ -21,6 +22,18 @@ export class UsersController {
   async signup(@Body() body: UserSignupDto): Promise<{ user: UserEntity }> {
     // console.log(body)
     return { user: await this.usersService.signup(body) };
+  }
+
+  @Post('login')
+  async login(@Body() body: UserLoginDto): Promise<{
+    accessToken: string;
+    user: UserEntity;
+  }> {
+    // console.log(body)
+    const user = await this.usersService.login(body);
+    const accessToken = await this.usersService.assignToken(user);
+
+    return { accessToken, user };
   }
 
   @Post()
